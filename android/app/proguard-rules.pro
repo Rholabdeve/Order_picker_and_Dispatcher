@@ -1,0 +1,1 @@
+-keep class com.example.delivery_man.BuildConfig { *; }
