@@ -1,6 +1,7 @@
 import 'package:delivery_man/const/my_color.dart';
 import 'package:delivery_man/repository/order_picker_repo/order_picker_repository.dart';
 import 'package:delivery_man/repository/order_picker_repo/order_picker_repository_impl.dart';
+import 'package:delivery_man/view/select_roles/order_picker/home_screen_order_picker/home_screen_order_picker.dart';
 import 'package:delivery_man/widgets/custom_button.dart';
 import 'package:delivery_man/widgets/flushbar.dart';
 import 'package:flutter/material.dart';
@@ -180,11 +181,25 @@ class ScanProductController extends ChangeNotifier {
                                   message: 'Barcode updated successfully',
                                   context: context);
                               updatebarcodecontroller.clear();
+                              await Future.delayed(
+                                  Duration(seconds: 2)); // Add a delay
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          HomeScreenOrderPicker()));
                             } else {
                               FlushBar.flushBarMessageGreen(
                                   message: 'Barcode Already updated',
                                   context: context);
                               updatebarcodecontroller.clear();
+                              await Future.delayed(
+                                  Duration(seconds: 2)); // Add a delay
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          HomeScreenOrderPicker()));
                             }
                           },
                           buttonText: "Update",

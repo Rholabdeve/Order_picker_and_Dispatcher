@@ -121,13 +121,44 @@ class _HomeScreenOrderPickerState extends State<HomeScreenOrderPicker> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        final session = SessionController.instance;
-                        session.clearSession();
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text("Confirm Logout"),
+                              content: Text("Are you sure you want to logout?"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .pop(); // Close the dialog
+                                  },
+                                  child: Text(
+                                    "Cancel",
+                                    style: TextStyle(color: myColor.redcolor),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    final session = SessionController.instance;
+                                    session.clearSession();
 
-                        Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                                builder: (context) => LoginScreen()),
-                            (Route<dynamic> route) => false);
+                                    Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                        builder: (context) => LoginScreen(),
+                                      ),
+                                      (Route<dynamic> route) => false,
+                                    );
+                                  },
+                                  child: Text(
+                                    "Logout",
+                                    style: TextStyle(color: myColor.redcolor),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       },
                       child: Row(
                         children: [
