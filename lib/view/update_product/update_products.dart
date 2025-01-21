@@ -72,30 +72,6 @@ class _UpdateProductsDetailsState extends State<UpdateProductsDetails> {
                 ),
               ),
               SizedBox(
-                height: mq.height * 0.009,
-              ),
-              Text("Product quantity"),
-              SizedBox(
-                height: mq.height * 0.009,
-              ),
-              Container(
-                height: mq.height * 0.07,
-                child: TextFormField(
-                  controller: productquantitycontroller,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(color: myColor.themeColor),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: myColor.themeColor, width: 2.0),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
                 height: 20,
               ),
               CustomButton(

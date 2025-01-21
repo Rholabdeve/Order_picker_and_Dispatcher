@@ -29,12 +29,9 @@ class _HomeScreenOrderPickerState extends State<HomeScreenOrderPicker> {
     final orderPickerModel =
         Provider.of<HomeOrderPickerController>(context, listen: false);
     Provider.of<ScanProductController>(context, listen: false).getdata();
-    // final provider = Provider.of<ScanProductController>(context, listen: false);
 
-    // print(" data hai ${provider.data}");
     orderPickerModel.getSalesPicker(context);
     orderPickerModel.store_first_last_name();
-    // provider.fetchscanproduct("${8964000346549}", "${10}");
   }
 
   @override

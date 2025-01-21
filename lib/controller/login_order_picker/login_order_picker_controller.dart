@@ -23,6 +23,7 @@ class Login_Picker_Controller extends ChangeNotifier {
   final TextEditingController passwordController = TextEditingController();
   bool saving_ = false;
   var wearhouse_id;
+  var user_id;
   bool get saving => saving_;
 
   Future<void> login(BuildContext context) async {
@@ -31,6 +32,7 @@ class Login_Picker_Controller extends ChangeNotifier {
     FocusScope.of(context).unfocus();
     if (res['code_status'] == true) {
       wearhouse_id = res['login_data']['warehouse_id'];
+      user_id = res['login_data']['id'];
       final session = SessionController.instance;
       session.setSession(
           res['login_data']['id'],
@@ -42,6 +44,7 @@ class Login_Picker_Controller extends ChangeNotifier {
       print('Response: $res');
       storeid();
       print("wearhouseid $wearhouse_id");
+      print("userid $user_id");
 
       SchedulerBinding.instance.addPostFrameCallback(
         (_) async {
@@ -72,5 +75,6 @@ class Login_Picker_Controller extends ChangeNotifier {
   Future storeid() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('wearhpuse_id', wearhouse_id);
+    await prefs.setString('id', user_id);
   }
 }

@@ -9,6 +9,7 @@ class globalKeys {
   //
   static var productList = "${baseUrl}products/lists";
   static var scanproduct = "${baseUrl}OrderPicker/search_product";
+  static var updatebarcode = "${baseUrl}Products/update_barcode";
   static var sms_api = "${baseUrl}Auth/smsAPI";
   static var order_status = "${baseUrl}OrderPicker/order_status";
   static var createSo = "${baseUrl}Autosalesorder/createso";

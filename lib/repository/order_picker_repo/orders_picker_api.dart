@@ -13,6 +13,21 @@ class OrderPickerApi extends BaseApi {
     return body;
   }
 
+  Future<dynamic> barcodeupdate(
+      String barcodenum, String product_id, String user_id) async {
+    var apiUrl = globalKeys.updatebarcode;
+    final response = await postApi(
+        apiUrl,
+        _createBody({
+          "barcode": barcodenum,
+          "product_id": product_id,
+          "user_id": user_id
+        }));
+    print(
+        'Barcode_number $barcodenum, Wearhouse_id $product_id, user_id $user_id');
+    return response;
+  }
+
   Future<dynamic> scanproduct(String barcodenum, String wearhouse_id) async {
     var apiUrl = globalKeys.scanproduct;
     final response = await postApi(

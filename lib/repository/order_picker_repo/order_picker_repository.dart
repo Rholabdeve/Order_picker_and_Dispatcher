@@ -17,4 +17,6 @@ abstract class OrderPickerRepository {
   Future<dynamic> smsApi(Map<String, String> smsData);
   Future<dynamic> customersEmails();
   Future<dynamic> scanproduct(String barcodenum, String wearhouse_id);
+  Future<dynamic> barcodeupdate(
+      String barcodenum, String product_id, String user_id);
 }

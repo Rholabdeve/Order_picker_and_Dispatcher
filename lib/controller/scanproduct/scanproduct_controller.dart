@@ -1,7 +1,7 @@
 import 'package:delivery_man/const/my_color.dart';
 import 'package:delivery_man/repository/order_picker_repo/order_picker_repository.dart';
 import 'package:delivery_man/repository/order_picker_repo/order_picker_repository_impl.dart';
-import 'package:delivery_man/view/update_product/update_products.dart';
+import 'package:delivery_man/widgets/custom_button.dart';
 import 'package:delivery_man/widgets/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -9,8 +9,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ScanProductController extends ChangeNotifier {
   final OrderPickerRepository scanproduct = OrderPickerRepositoryImpl();
+  final updatebarcodecontroller = TextEditingController();
   List<Map<String, dynamic>> data = [];
   var wearhouse_id;
+  var user_id;
 
   Future<void> fetchscanproduct(String barcodenum, String wearhouse_id) async {
     try {
@@ -30,16 +32,25 @@ class ScanProductController extends ChangeNotifier {
     }
   }
 
-  Future<void> loadScanResults() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    for (var product in data) {
-      String productCode = product['code'];
-      String? storedResult = prefs.getString(productCode);
-      if (storedResult != null) {
-        product['product_name'] = storedResult;
+  Future<void> fetchupdatebarcode(
+    String barcodenum,
+    String productid,
+    String user_id,
+  ) async {
+    try {
+      var response =
+          await scanproduct.barcodeupdate(barcodenum, productid, user_id);
+      print("API Response: $response");
+      if (response["code_status"] == true) {
+        print("respone is comming ${response}");
+        notifyListeners();
+      } else {
+        print("Exception $response");
+        throw Exception(response['message']);
       }
+    } catch (e) {
+      print("Catch Block $e");
     }
-    notifyListeners();
   }
 
   Future<void> saveScanResult(String productCode, String result) async {
@@ -85,7 +96,110 @@ class ScanProductController extends ChangeNotifier {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     wearhouse_id = prefs.getString('wearhpuse_id');
+    user_id = prefs.getString('id');
     notifyListeners();
+  }
+
+  void updateModalBottomSheet(context) {
+    String productid = data[0]['product_id'];
+    updatebarcodecontroller.text = data[0]['product_code'];
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        builder: (BuildContext bc) {
+          var mq = MediaQuery.of(context).size;
+          return Form(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  height: mq.height * 0.56,
+                  width: mq.width,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: mq.width * 0.04,
+                        vertical: mq.height * 0.04),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Update Screen!",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium!
+                              .copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: mq.height * 0.01),
+                        SizedBox(
+                          width: mq.width * 0.8,
+                          child: Text(
+                            "Select on of the options given below to Update your Barcode",
+                            maxLines: 2,
+                          ),
+                        ),
+                        SizedBox(
+                          height: mq.height * 0.01,
+                        ),
+                        Container(
+                          height: mq.height * 0.07,
+                          child: TextFormField(
+                            controller: updatebarcodecontroller,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: myColor.themeColor),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: myColor.themeColor, width: 2.0),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              contentPadding: EdgeInsets.symmetric(
+                                  vertical: 20.0, horizontal: 12.0),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: mq.height * 0.02),
+                        CustomButton(
+                          onTap: () async {
+                            if (data[0]['updated_by'] == null) {
+                              print(
+                                  "User_id ${user_id} ,updatebarcodecontroller ${updatebarcodecontroller.text} productid ${productid}");
+                              await fetchupdatebarcode(
+                                  updatebarcodecontroller.text,
+                                  productid,
+                                  user_id);
+                              FlushBar.flushBarMessageGreen(
+                                  message: 'Barcode updated successfully',
+                                  context: context);
+                              updatebarcodecontroller.clear();
+                            } else {
+                              FlushBar.flushBarMessageGreen(
+                                  message: 'Barcode Already updated',
+                                  context: context);
+                              updatebarcodecontroller.clear();
+                            }
+                          },
+                          buttonText: "Update",
+                          sizeWidth: double.infinity,
+                          buttonTextSize: mq.height * 0.02,
+                        ),
+                        SizedBox(height: mq.height * 0.02),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
   }
 
   void showProductDialog(BuildContext context, String productName,
@@ -108,16 +222,14 @@ class ScanProductController extends ChangeNotifier {
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                     Expanded(
-                      // Use Expanded to make the Text widget take remaining space
                       child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal, // Horizontal scroll
+                        scrollDirection: Axis.horizontal,
                         child: Text(productName),
                       ),
                     )
                   ],
                 ),
                 SizedBox(height: 10),
-
                 Row(
                   children: [
                     Text(
@@ -126,16 +238,12 @@ class ScanProductController extends ChangeNotifier {
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                     SingleChildScrollView(
-                      scrollDirection:
-                          Axis.horizontal, // Set scroll direction to horizontal
+                      scrollDirection: Axis.horizontal,
                       child: Text(warehouse),
                     ),
                   ],
                 ),
                 SizedBox(height: 10),
-
-                // Column for Warehouse Name
-
                 Row(
                   children: [
                     Text(
@@ -152,13 +260,7 @@ class ScanProductController extends ChangeNotifier {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => UpdateProductsDetails(
-                              name: data[0]['product_name'],
-                              qty: data[0]['available_qty'],
-                            )));
+                updateModalBottomSheet(context);
               },
               child: Text(
                 "Update",

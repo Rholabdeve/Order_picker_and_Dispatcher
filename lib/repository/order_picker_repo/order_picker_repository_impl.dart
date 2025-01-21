@@ -5,6 +5,15 @@ class OrderPickerRepositoryImpl implements OrderPickerRepository {
   final OrderPickerApi _api = OrderPickerApi();
 
   @override
+  Future<dynamic> barcodeupdate(
+    String barcodenum,
+    String product_id,
+    String user_id,
+  ) {
+    return _api.barcodeupdate(barcodenum, product_id, user_id);
+  }
+
+  @override
   Future<dynamic> scanproduct(String barcodenum, String wearhouse_id) {
     return _api.scanproduct(barcodenum, wearhouse_id);
   }
