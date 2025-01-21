@@ -169,7 +169,7 @@ class ScanProductController extends ChangeNotifier {
                         SizedBox(height: mq.height * 0.02),
                         CustomButton(
                           onTap: () async {
-                            if (data[0]['updated_by'] == null) {
+                            if (data[0]['updated_by'] == "") {
                               print(
                                   "User_id ${user_id} ,updatebarcodecontroller ${updatebarcodecontroller.text} productid ${productid}");
                               await fetchupdatebarcode(
