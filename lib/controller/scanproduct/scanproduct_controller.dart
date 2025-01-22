@@ -11,8 +11,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ScanProductController extends ChangeNotifier {
   final OrderPickerRepository scanproduct = OrderPickerRepositoryImpl();
   final updatebarcodecontroller = TextEditingController();
-
-  final formKey = GlobalKey<FormState>();
   List<Map<String, dynamic>> data = [];
   var wearhouse_id;
   var user_id;
@@ -104,7 +102,6 @@ class ScanProductController extends ChangeNotifier {
   }
 
   void updateModalBottomSheet(context) {
-    String productCode = data[0]['product_code'];
     String productid = data[0]['product_id'];
     updatebarcodecontroller.text = data[0]['product_code'];
     showModalBottomSheet(
@@ -151,35 +148,39 @@ class ScanProductController extends ChangeNotifier {
                         SizedBox(
                           height: mq.height * 0.01,
                         ),
-                        Container(
-                          height: mq.height * 0.07,
-                          child: TextFormField(
-                            controller: updatebarcodecontroller,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: myColor.themeColor),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: myColor.themeColor, width: 2.0),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 20.0, horizontal: 12.0),
+                        TextFormField(
+                          controller: updatebarcodecontroller,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(color: myColor.themeColor),
                             ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: myColor.themeColor, width: 2.0),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 20.0, horizontal: 12.0),
                           ),
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return "BarCode Number is require";
+                            } else if (value.length < 13) {
+                              return "Minimum Length should be 13";
+                            }
+                            return null;
+                          },
                         ),
                         SizedBox(height: mq.height * 0.02),
                         CustomButton(
                           onTap: () async {
                             if (data[0]['updated_by'] == "") {
                               print(
-                                  "User_id ${user_id} ,updatebarcodecontroller ${updatebarcodecontroller.text} productid ${productCode}");
-                              await fetchupdatebarcode(
-                                  updatebarcodecontroller.text,
-                                  productid,
-                                  user_id);
+                                  "User_id ${user_id} ,updatebarcodecontroller ${updatebarcodecontroller.text} productid ${productid}");
+                              // await fetchupdatebarcode(
+                              //     updatebarcodecontroller.text,
+                              //     productid,
+                              //     user_id);
                               FlushBar.flushBarMessageGreen(
                                   message: 'Barcode updated successfully',
                                   context: context);
@@ -203,18 +204,18 @@ class ScanProductController extends ChangeNotifier {
                                       builder: (context) =>
                                           HomeScreenOrderPicker()));
                             }
-                          }
-                        },
-                        buttonText: "Update",
-                        sizeWidth: double.infinity,
-                        buttonTextSize: mq.height * 0.02,
-                      ),
-                      SizedBox(height: mq.height * 0.02),
-                    ],
+                          },
+                          buttonText: "Update",
+                          sizeWidth: double.infinity,
+                          buttonTextSize: mq.height * 0.02,
+                        ),
+                        SizedBox(height: mq.height * 0.02),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         });
   }
