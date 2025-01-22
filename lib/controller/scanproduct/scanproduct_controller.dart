@@ -165,6 +165,14 @@ class ScanProductController extends ChangeNotifier {
                               contentPadding: EdgeInsets.symmetric(
                                   vertical: 20.0, horizontal: 12.0),
                             ),
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return "BarCode Number is require";
+                              } else if (value.length < 13) {
+                                return "Minimum Length should be 13";
+                              }
+                              return null;
+                            },
                           ),
                         ),
                         SizedBox(height: mq.height * 0.02),
@@ -182,7 +190,7 @@ class ScanProductController extends ChangeNotifier {
                                   context: context);
                               updatebarcodecontroller.clear();
                               await Future.delayed(
-                                  Duration(seconds: 2)); // Add a delay
+                                  Duration(seconds: 1)); // Add a delay
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -193,8 +201,7 @@ class ScanProductController extends ChangeNotifier {
                                   message: 'Barcode Already updated',
                                   context: context);
                               updatebarcodecontroller.clear();
-                              await Future.delayed(
-                                  Duration(seconds: 2)); // Add a delay
+                              await Future.delayed(Duration(seconds: 1));
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
